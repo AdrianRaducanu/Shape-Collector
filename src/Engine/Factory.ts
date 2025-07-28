@@ -1,9 +1,8 @@
 import {Graphics} from "pixi.js";
 
 export default class Factory {
-    static async create(shape: string, color: string,) {
+    static async create(shape: string, color: string, cb?: (shape: string, color: string) => void) {
         let displayObject;
-        console.log(shape, color)
         switch (shape) {
             case 'circle':
                 displayObject = new Graphics();
@@ -30,15 +29,28 @@ export default class Factory {
                 displayObject.fill(color);
                 break;
             default:
+                displayObject = new Graphics();
                 console.warn("Unknown type: ");
                 break;
         }
 
+        if(cb) {
+            Factory._addInteractivity(displayObject, () => cb(shape,color));
+        }
+        return displayObject;
+    }
+
+    static _addInteractivity(displayObject: Graphics, cb: () => void) {
+        const onClick = () => {
+            cb();
+            if (displayObject.parent) {
+                displayObject.parent.removeChild(displayObject);
+                displayObject.destroy();
+            }
+        };
+
         displayObject.eventMode = 'static';
         displayObject.cursor = 'pointer';
-        displayObject.on('pointerdown', () => {
-            console.log('click');
-        })
-        return displayObject;
+        displayObject.on('pointerdown', onClick);
     }
 }

@@ -1,7 +1,7 @@
-import {Application, Graphics} from 'pixi.js';
+import {Application, Container, Graphics, Text} from 'pixi.js';
 import {HOLES} from "../utils.ts";
-import type {Difficulty} from "../types";
 import Factory from "./Factory.ts";
+import gsap from 'gsap';
 
 class SingletonEnforcer {
     static _instance: Engine;
@@ -46,30 +46,88 @@ export default class Engine {
     }
 
     createHoles() {
+        const holes = new Container();
+        holes.label = 'holes';
         HOLES.forEach(h => {
             const circle = new Graphics();
             circle.fill({ color: '#313131' });
             circle.circle(0, 0, 40);
             circle.position.set(h.x, h.y);
             circle.fill();
-            this.app?.stage.addChild(circle)
+            holes.addChild(circle)
         });
-
+        this.app?.stage.addChild(holes);
     }
 
     async generateMainShape(shape: string, color: string) {
         const obj = await Factory.create(shape, color);
-        // @ts-ignore
+
         obj.position.set(HOLES[0].x, HOLES[0].y);
-        console.log(obj)
-        this.app?.stage.addChild(obj)
+        obj.label = 'main shape';
+        this.app?.stage.addChild(obj);
     }
 
-    async generateShapes(pairs) {
+    async generateShapes(pairs: Array<{shape: string, color: string}>, cb: (shape: string, color: string) => void) {
+        const shapes = new Container();
+        shapes.label = 'shapes';
         for(let i= 0; i<pairs.length; i++) {
-            const obj = await Factory.create(pairs[i].shape, pairs[i].color);
+            const { shape, color } = pairs[i];
+            const obj = await Factory.create(shape, color, () => cb(shape, color));
             obj.position.set(HOLES[i + 1].x, HOLES[i + 1].y);
-            this.app?.stage.addChild(obj);
+            shapes.addChild(obj);
+        }
+        this.app?.stage.addChild(shapes);
+    }
+
+    finishLevel(win: boolean = true) {
+        this._clearShapes();
+        this._generateResult(win);
+    }
+
+    _generateResult(win: boolean = true) {
+        if (!this.app) return;
+
+        const message = win ? 'You Won!' : 'Try Again!';
+        const color = '#cecdcd';
+
+        const resultText = new Text({
+            text: message,
+            style: {
+                fill: color,
+                fontSize: 48,
+                fontWeight: 'bold',
+            }
+        });
+
+        resultText.anchor.set(0.5);
+        resultText.position.set(this.app.renderer.width / 2, this.app.renderer.height / 2);
+        resultText.alpha = 0;
+
+        this.app.stage.addChild(resultText);
+
+        gsap.to(resultText, {
+            alpha: 1,
+            duration: 1,
+            yoyo: true,
+            repeat: 1,
+            onComplete: () => {
+                this.app?.stage.removeChild(resultText);
+                resultText.destroy();
+            }
+        });
+    }
+
+    _clearShapes() {
+        const mainShape = this.app?.stage.children.find(child => child.label === 'main shape');
+        if (mainShape) {
+            this.app?.stage.removeChild(mainShape);
+            mainShape.destroy({ children: true });
+        }
+
+        const shapes = this.app?.stage.children.find(child => child.label === 'shapes');
+        if (shapes) {
+            this.app?.stage.removeChild(shapes);
+            shapes.destroy({ children: true });
         }
     }
 
