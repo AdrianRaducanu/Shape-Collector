@@ -29,7 +29,13 @@ npm run dev
 ```
 
 # About
+
+> **Important !!!:**
+> - I noticed that from time to time, after pressing the start button, nothing happens, probably due to the attachment of shapes and text to the `this.app.stage`. I haven't allocated time to investigate this issue. If you encounter the same problem, a refresh should resolve the situation.
+> - The app was developed using **Chrome**. Please use this browser to test, I know that Mozilla is more restrictive when working with WebGL. This error might happen: WebGL context was lost.
+
 This project implements some of the main requirements of the task. The focus was on developing the architecture and making a functional game.
+
 ### Features
 - The user can select a **difficulty** level to play the game. Based on the selected difficulty, two key factors of the game are adjusted:
     - **Timer** duration per round/level.
