@@ -1,6 +1,5 @@
 export const SHAPES = ['circle', 'rectangle', 'square', 'diamond'];
 export const COLORS = ['red', 'green', 'blue', 'yellow'];
-export const LEVELS = [3, 6, 10];
 export const HOLES = [
     {
         x: 300,
@@ -47,23 +46,6 @@ export const HOLES = [
         y: 300,
     },
 ];
-export const DIFFICULTY = {
-    'low': {
-        'colors': 2,
-        'selectionTime': 6,
-        'penalty': 0.5,
-    },
-    'medium': {
-        'colors': 3,
-        'selectionTime': 4,
-        'penalty': 1,
-    },
-    'high': {
-        'colors': 4,
-        'selectionTime': 2,
-        'penalty': 2,
-    },
-}
 
 export function getRandomShape(colors: string[], shapes: string[]) {
     if (colors.length === 0 || shapes.length === 0) {

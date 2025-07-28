@@ -36,6 +36,7 @@ export default class Engine {
             width: 600,
             height: 400,
             backgroundAlpha: 1,
+            backgroundColor: "#151b1e"
         });
 
         this.app = app;
@@ -50,7 +51,7 @@ export default class Engine {
         holes.label = 'holes';
         HOLES.forEach(h => {
             const circle = new Graphics();
-            circle.fill({ color: '#313131' });
+            circle.fill({ color: '#1f282c' });
             circle.circle(0, 0, 40);
             circle.position.set(h.x, h.y);
             circle.fill();
@@ -79,15 +80,58 @@ export default class Engine {
         this.app?.stage.addChild(shapes);
     }
 
-    finishLevel(win: boolean = true) {
+    finishLevel(win: boolean = true, cb?: () => void) {
         this._clearShapes();
-        this._generateResult(win);
+        this._generateResult(win, cb);
     }
 
-    _generateResult(win: boolean = true) {
+    async showCountdown(cb?: () => void) {
         if (!this.app) return;
 
-        const message = win ? 'You Won!' : 'Try Again!';
+        const messages = ['3', '2', '1', 'Start!'];
+        let delay = 0;
+
+        for (const msg of messages) {
+            const text = new Text({
+                text: msg,
+                style: {
+                    fill: '#ffffff',
+                    fontSize: 64,
+                    fontWeight: 'bold',
+                }
+            });
+
+            text.anchor.set(0.5);
+            text.scale.set(1);
+            text.position.set(this.app.renderer.width / 2, this.app.renderer.height / 2);
+            text.alpha = 0;
+            this.app?.stage.addChild(text);
+
+            gsap.to(text, {
+                delay,
+                alpha: 1,
+                scale: 1.5,
+                duration: 0.5,
+                ease: 'power2.out',
+                yoyo: true,
+                repeat: 1,
+                onComplete: () => {
+                    this.app?.stage.removeChild(text);
+                    text.destroy();
+                    if (msg === 'Start!' && cb) {
+                        cb();
+                    }
+                }
+            });
+            delay += 1;
+        }
+    }
+
+
+    _generateResult(win: boolean = true, cb?: () => void) {
+        if (!this.app) return;
+
+        const message = win ? 'You Won!' : 'You Lost!';
         const color = '#cecdcd';
 
         const resultText = new Text({
@@ -113,6 +157,9 @@ export default class Engine {
             onComplete: () => {
                 this.app?.stage.removeChild(resultText);
                 resultText.destroy();
+                if(cb) {
+                    cb();
+                }
             }
         });
     }
@@ -132,6 +179,7 @@ export default class Engine {
     }
 
     cleanUp() {
+        gsap.globalTimeline.clear();
         if (this.app) {
             this.app.destroy(true);
             this.app = undefined;
