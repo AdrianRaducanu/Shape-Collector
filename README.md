@@ -40,6 +40,7 @@ This project implements some of the main requirements of the task. The focus was
 - The user can select a **difficulty** level to play the game. Based on the selected difficulty, two key factors of the game are adjusted:
     - **Timer** duration per round/level.
     - **Variety of shapes**.
+    - **Penalty points**
 
 - Once the user clicks **"Start Game"**:
     - The button will disappear and be replaced by a timer.
@@ -55,7 +56,7 @@ This project implements some of the main requirements of the task. The focus was
 ### Differences from the Task Requirements
 Due to time constraints, some features were not implemented or simplified:
 - **Point System**:
-  The user gains points for each correct shape clicked but does not lose points if clicking a bad shape.
+  The user gains points for each correct shape clicked and lose when clicked on distractors, but the game will not be over if Score reaches 0.
 - **Game Over**:
   When the timer runs out, the game is lost. If the user wants to play again, they should go back to the main menu to select a new difficulty.
 - **No Leaderboard**:

@@ -39,6 +39,7 @@ const Game = ({ difficulty, onBackToMenu }: GameProps) => {
     const [start, setStart] = useState(false);
     const [resetTimer, setResetTimer] = useState(0);
     const [startBtnVisible, setStartBtnVisible] = useState(true);
+    const [gameOver, setGameOver] = useState(false);
 
     const onBackBtn = () => {
         Engine.instance.cleanUp();
@@ -82,7 +83,7 @@ const Game = ({ difficulty, onBackToMenu }: GameProps) => {
             } else {
                 //finish game
                 Engine.instance.cleanUp();
-                console.log('finish');
+                setGameOver(true);
             }
         }
     }, [matchShapes, winCondition]);
@@ -117,7 +118,7 @@ const Game = ({ difficulty, onBackToMenu }: GameProps) => {
                 }
             </div>
 
-            <Canvas/>
+            {gameOver? <h2>Congratulations!</h2> : <Canvas />}
 
         </div>
     );
