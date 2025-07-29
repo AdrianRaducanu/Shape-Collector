@@ -37,7 +37,7 @@ npm run dev
 This project implements some of the main requirements of the task. The focus was on developing the architecture and making a functional game.
 
 ### Features
-- The user can select a **difficulty** level to play the game. Based on the selected difficulty, two key factors of the game are adjusted:
+- The user can select a **difficulty** level to play the game. Based on the selected difficulty, these factors of the game are adjusted:
     - **Timer** duration per round/level.
     - **Variety of shapes**.
     - **Penalty points**
@@ -92,9 +92,9 @@ Due to time constraints, some features were not implemented or simplified:
 
 - **`Factory` Class**:
   Implements the **factory** pattern.
-    - Dynamically creates shapes based on input parameters, such as **shape** and **color**.
+    - Dynamically creates shapes based on input parameters - **shape** and **color**.
 
-### Explanation of Patterns Used
+### Design Patterns Used
 - **Singleton Pattern**:
   Ensures that there is only one instance of the `Engine` class throughout the application, providing a centralized and consistent way to access and manipulate the pixi logic.
 - **Facade Pattern**:
